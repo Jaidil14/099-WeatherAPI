@@ -60,3 +60,52 @@
         <p class="info-detail"><strong>Latitude:</strong> <span id="lat">-</span></p>
         <p class="info-detail"><strong>Longitude:</strong> <span id="lon">-</span></p>
     </div>
+
+<script>
+        const API_KEY = "9ee3720d2fa24bdda5c12227250610";
+
+        document.getElementById('getButton').addEventListener('click', function() {
+            const kota = document.getElementById('lokasiInput').value.trim();
+            
+            function resetOutput() {
+                document.getElementById('negara').innerText = '-';
+                document.getElementById('provinsi').innerText = '-';
+                document.getElementById('suhu').innerText = '-';
+                document.getElementById('kelembaban').innerText = '-';
+                document.getElementById('namaLokasi').innerText = '-';
+                document.getElementById('lat').innerText = '-';
+                document.getElementById('lon').innerText = '-';
+            }
+
+            if (!kota) {
+                alert("Masukkan nama lokasi terlebih dahulu.");
+                return;
+            }
+            
+            resetOutput();
+
+            const urlapi = `http://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${kota}&aqi=no`;
+
+            $.ajax({
+                url: urlapi,
+                method: 'GET',
+                success: function(data) {
+                    document.getElementById('negara').innerText = data.location.country;
+                    document.getElementById('provinsi').innerText = data.location.region || '-';
+                    document.getElementById('suhu').innerText = `${data.current.temp_c}°C`; 
+                    document.getElementById('kelembaban').innerText = `${data.current.humidity}%`;
+                    document.getElementById('namaLokasi').innerText = data.location.name;
+                    document.getElementById('lat').innerText = `${data.location.lat}`;
+                    document.getElementById('lon').innerText = `${data.location.lon}`;
+                },
+                error: function(xhr, status, error) { 
+                    console.error("Gagal mengambil data:", status, error);
+                    alert("Gagal mengambil data cuaca. Pastikan nama lokasi benar.");
+                    resetOutput();
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
